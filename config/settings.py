@@ -130,9 +130,9 @@ try:
 except Exception:
     import os
     MEDIA_ROOT = os.path.join(r"C:\NuevaVictoria", "media")
-LOGIN_URL = 'login'
+LOGIN_URL = 'usuarios:login'
 LOGIN_REDIRECT_URL = 'dashboard'
-LOGOUT_REDIRECT_URL = 'login'
+LOGOUT_REDIRECT_URL = 'usuarios:login'
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 # Asegurar carpeta templates
