@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load form_extras %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-12 col-md-5 col-lg-4">
+    <div class="card border-soft">
+      <div class="card-body">
+        <h5 class="mb-3">Iniciar sesion</h5>
+        <form method="post" novalidate>
+          {% csrf_token %}
+          {{ form.non_field_errors }}
+          <div class="mb-3">
+            <label class="form-label">Usuario</label>
+            {{ form.username|add_class:"form-control" }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            {{ form.password|add_class:"form-control" }}
+          </div>
+          <button class="btn btn-gold w-100">Entrar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

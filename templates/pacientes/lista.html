@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Pacientes â€” Lista{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">Pacientes</h4>
+    <a class="btn btn-dark" href="{% url 'pacientes_nuevo' %}"><i class="bi bi-plus"></i> Nuevo</a>
+  </div>
+  <div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Expediente</th>
+            <th>Nombre</th>
+            <th>Tipo de adicciÃ³n</th>
+            <th>Ingreso</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in pacientes %}
+            <tr onclick="window.location='{% url 'pacientes_detalle' p.pk %}'" style="cursor:pointer">
+              <td>{{ p.expediente }}</td>
+              <td>{{ p.nombre_completo }}</td>
+              <td>{{ p.tipo_adiccion }}</td>
+              <td>{{ p.fecha_ingreso }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="4" class="text-center text-muted py-4">Sin pacientes aÃºn</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% if is_paginated %}
+  <nav class="mt-3">
+    <ul class="pagination">
+      {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a></li>
+      {% endif %}
+      <li class="page-item disabled"><span class="page-link">PÃ¡gina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span></li>
+      {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+</div>
+{% endblock %}

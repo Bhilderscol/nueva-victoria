@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">Dashboard</h4>
+    <a class="btn btn-outline-secondary btn-sm" href="{% url 'usuarios:logout' %}">Cerrar sesiÃ³n</a>
+  </div>
+  <div class="alert alert-info">Dashboard cargado correctamente. Ahora puedes aÃ±adir las tarjetas por rol.</div>
+</div>
+{% endblock %}

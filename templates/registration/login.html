@@ -1,0 +1,99 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Iniciar sesiÃ³n | Centro Nueva Victoria</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes floatSoft {
+      0%   { transform: translateY(0); }
+      50%  { transform: translateY(-6px); }
+      100% { transform: translateY(0); }
+    }
+    .fade-in-up { animation: fadeInUp 1.0s ease-out forwards; }
+    .float-soft { animation: floatSoft 4s ease-in-out infinite; }
+    .bg-gradient { background: radial-gradient(circle at 20% -10%, #eef2ff, #e0e7ff 40%, #c7d2fe 70%); }
+    .dark .bg-gradient { background: radial-gradient(circle at 20% -10%, #1e1b4b, #312e81 40%, #3730a3 70%); }
+
+    /* Respeta accesibilidad */
+    @media (prefers-reduced-motion: reduce) {
+      .fade-in-up, .float-soft { animation: none !important; }
+    }
+  </style>
+</head>
+<body class="h-full flex items-center justify-center bg-gradient dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+  <div class="w-full max-w-md px-6 py-10 sm:px-8 sm:py-12 bg-white/80 dark:bg-gray-800/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 fade-in-up">
+    <div class="flex justify-center mb-8">
+      <img src="{% static 'img/logo-nueva-victoria.png' %}"
+           alt="Centro Nueva Victoria"
+           class="h-24 w-auto opacity-0 animate-[fadeInUp_1.2s_ease-out_forwards] float-soft" />
+    </div>
+
+    <div class="text-center mb-8">
+      <h1 class="text-2xl font-bold">Bienvenido</h1>
+      <p class="text-sm text-gray-500 dark:text-gray-400">Inicia sesiÃ³n para continuar</p>
+    </div>
+
+    {% if form.non_field_errors %}
+      <div class="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-red-700 dark:border-red-800 dark:bg-red-900/30 dark:text-red-300">
+        {% for err in form.non_field_errors %}<p>{{ err }}</p>{% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post" class="space-y-5">
+      {% csrf_token %}
+      <div class="flex flex-col">
+        <label for="{{ form.username.id_for_label }}" class="text-sm font-medium mb-1">Usuario</label>
+        <input type="text" name="{{ form.username.html_name }}" id="{{ form.username.id_for_label }}"
+               value="{{ form.username.value|default:'' }}" autocomplete="username" required
+               class="rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full text-center"
+               placeholder="Tu usuario"/>
+        {% if form.username.errors %}<p class="text-sm text-red-500 mt-1">{{ form.username.errors|striptags }}</p>{% endif %}
+      </div>
+
+      <div class="flex flex-col">
+        <label for="{{ form.password.id_for_label }}" class="text-sm font-medium mb-1">ContraseÃ±a</label>
+        <div class="relative">
+          <input type="password" name="{{ form.password.html_name }}" id="{{ form.password.id_for_label }}"
+                 autocomplete="current-password" required
+                 class="rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full text-center"
+                 placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"/>
+          <button type="button" id="togglePwd"
+                  class="absolute inset-y-0 right-0 px-3 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">ðŸ‘ï¸</button>
+        </div>
+        {% if form.password.errors %}<p class="text-sm text-red-500 mt-1">{{ form.password.errors|striptags }}</p>{% endif %}
+      </div>
+
+      <div class="flex items-center justify-between">
+        <label class="inline-flex items-center gap-2">
+          <input type="checkbox" name="remember_me" class="rounded border-gray-300 dark:border-gray-700 text-indigo-600 focus:ring-indigo-500">
+          <span class="text-sm">RecuÃ©rdame</span>
+        </label>
+        <a href="{% url 'password_reset' %}" class="text-sm text-indigo-600 hover:underline">Â¿Olvidaste tu contraseÃ±a?</a>
+      </div>
+
+      <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg">
+        Iniciar sesiÃ³n
+      </button>
+    </form>
+
+    <p class="mt-8 text-center text-xs text-gray-500 dark:text-gray-400">
+      Centro Nueva Victoria Â· â€œEn Cristo somos mÃ¡s que vencedoresâ€
+    </p>
+  </div>
+
+  <script>
+    document.getElementById("togglePwd")?.addEventListener("click", () => {
+      const input = document.getElementById("{{ form.password.id_for_label }}");
+      if (!input) return;
+      input.type = input.type === "password" ? "text" : "password";
+    });
+  </script>
+</body>
+</html>

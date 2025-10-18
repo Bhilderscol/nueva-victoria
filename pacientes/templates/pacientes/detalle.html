@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Paciente - Detalle{% endblock %}
+{% block content %}
+<h5 class="mb-3">Paciente</h5>
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="card border-soft p-3 text-center">
+      {% if paciente.foto_perfil %}
+        <img src="{{ paciente.foto_perfil.url }}" alt="Foto" class="img-fluid rounded">
+      {% else %}
+        <div class="text-muted">Sin foto</div>
+      {% endif %}
+      <div class="mt-2"><span class="badge text-bg-secondary">Expediente: {{ paciente.expediente }}</span></div>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <div class="card border-soft p-3">
+      <div class="row">
+        <div class="col-md-8"><strong>{{ paciente.nombre_completo }}</strong></div>
+        <div class="col-md-4">Ingreso: {{ paciente.fecha_ingreso|default:"-" }}</div>
+        <div class="col-12 text-muted">Adiccion: {{ paciente.tipo_adiccion|default:"-" }}</div>
+        <div class="col-12 mt-2">Direccion: {{ paciente.direccion|default:"-" }}</div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-12"><strong>Responsable</strong></div>
+        <div class="col-md-4">Nombre: {{ paciente.responsable_nombre|default:"-" }}</div>
+        <div class="col-md-4">Telefono: {{ paciente.responsable_telefono|default:"-" }}</div>
+        <div class="col-md-4">Direccion: {{ paciente.responsable_direccion|default:"-" }}</div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-md-4">Costo semana: $ {{ paciente.costo_semana }}</div>
+        <div class="col-md-4">Laboratorios: $ {{ paciente.costo_laboratorios }}</div>
+        <div class="col-md-4">Traslado: $ {{ paciente.costo_traslado }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="mt-3">
+  <a class="btn btn-outline-secondary" href="{% url 'pacientes_lista' %}">Volver</a>
+</div>
+{% endblock %}

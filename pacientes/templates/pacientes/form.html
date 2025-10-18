@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Paciente - Nuevo{% endblock %}
+{% block content %}
+<h5 class="mb-3">Registrar paciente</h5>
+<form method="post" enctype="multipart/form-data" class="card border-soft p-3">
+  {% csrf_token %}
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label class="form-label">Nombre completo</label>
+      {{ form.nombre_completo }}
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Fecha nacimiento</label>
+      {{ form.fecha_nacimiento }}
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Tipo de adiccion</label>
+      {{ form.tipo_adiccion }}
+    </div>
+    <div class="col-12">
+      <label class="form-label">Direccion</label>
+      {{ form.direccion }}
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">Responsable nombre</label>
+      {{ form.responsable_nombre }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Responsable telefono</label>
+      {{ form.responsable_telefono }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Responsable direccion</label>
+      {{ form.responsable_direccion }}
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">Fecha ingreso</label>
+      {{ form.fecha_ingreso }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Fecha probable egreso</label>
+      {{ form.fecha_egreso_probable }}
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">Costo semana</label>
+      {{ form.costo_semana }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Costo laboratorios</label>
+      {{ form.costo_laboratorios }}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Costo traslado</label>
+      {{ form.costo_traslado }}
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">Foto perfil</label>
+      {{ form.foto_perfil }}
+    </div>
+  </div>
+  <div class="mt-3 d-flex gap-2">
+    <button class="btn btn-gold">Guardar</button>
+    <a class="btn btn-outline-secondary" href="{% url 'pacientes_lista' %}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

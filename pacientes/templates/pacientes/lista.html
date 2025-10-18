@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Pacientes - Lista{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h5 class="mb-0">Pacientes</h5>
+  <a class="btn btn-gold" href="{% url 'pacientes_nuevo' %}"><i class="bi bi-person-plus"></i> Nuevo</a>
+</div>
+<div class="card border-soft">
+  <div class="table-responsive">
+    <table class="table align-middle mb-0">
+      <thead><tr><th>Expediente</th><th>Nombre</th><th>Ingreso</th><th>Adiccion</th><th></th></tr></thead>
+      <tbody>
+        {% for p in pacientes %}
+          <tr>
+            <td>{{ p.expediente }}</td>
+            <td>{{ p.nombre_completo }}</td>
+            <td>{{ p.fecha_ingreso|default:"-" }}</td>
+            <td>{{ p.tipo_adiccion|default:"-" }}</td>
+            <td><a class="btn btn-sm btn-outline-secondary" href="{% url 'pacientes_detalle' p.pk %}">Ver</a></td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="5" class="text-center py-4 text-muted">Sin pacientes</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
