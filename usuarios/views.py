@@ -1,16 +1,34 @@
 # --- logout simple por GET, robusto ---
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
 
 
 def logout_view(request):
-    """Cierra sesión (GET o POST) y redirige al login con mensaje."""
+    """Cierra sesión (GET o POST) y redirige manejando el parámetro ``next``."""
 
-    logout(request)
+    redirect_to = request.POST.get("next") or request.GET.get("next")
+    if redirect_to and not url_has_allowed_host_and_scheme(
+        url=redirect_to,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        redirect_to = None
+
     messages.success(request, "Sesión cerrada correctamente.")
-    return redirect("usuarios:login")
+    logout(request)
+
+    if redirect_to:
+        return redirect(redirect_to)
+
+    if settings.LOGOUT_REDIRECT_URL:
+        return redirect(settings.LOGOUT_REDIRECT_URL)
+
+    return redirect(reverse("usuarios:login"))
 
 
 def user_in_group(user, group_name: str) -> bool:
