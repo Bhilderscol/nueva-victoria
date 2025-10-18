@@ -18,7 +18,7 @@ class CustomLoginView(LoginView):
 
 
 class CustomLogoutView(LogoutView):
-    next_page = "login"
+    next_page = "usuarios:login"
 
 from django.contrib.auth import logout
 from django.shortcuts import redirect
@@ -27,4 +27,4 @@ from django.views.decorators.http import require_GET
 @require_GET
 def logout_get(request):
     logout(request)
-    return redirect("login")
+    return redirect("usuarios:login")
