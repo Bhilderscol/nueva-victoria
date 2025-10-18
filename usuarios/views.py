@@ -60,8 +60,6 @@ def dashboard(request):
     context = {"cards": cards, "is_director": is_director, "is_lider": is_lider, "is_conta": is_conta}
     template_path = "usuarios/dashboard.html"
     return render(request, template_path, context)
-
-
 @login_required
 def pacientes_home(request):
     return HttpResponse("<h1>Pacientes</h1><p>Modulo en construccion.</p>")
