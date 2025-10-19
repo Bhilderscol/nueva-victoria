@@ -1,4 +1,4 @@
-# --- logout simple por GET, robusto ---
+﻿# usuarios/views.py
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
@@ -6,11 +6,15 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
+from .utils import user_in_groups
 
 
+# ----------------------------------------------------------------------
+# LOGOUT ROBUSTO
+# ----------------------------------------------------------------------
 def logout_view(request):
-    """Cierra sesión (GET o POST) y redirige manejando el parámetro ``next``."""
-
+    """Cierra sesión (GET o POST) y redirige manejando el parámetro 
+ext."""
     redirect_to = request.POST.get("next") or request.GET.get("next")
     if redirect_to and not url_has_allowed_host_and_scheme(
         url=redirect_to,
@@ -25,46 +29,92 @@ def logout_view(request):
     if redirect_to:
         return redirect(redirect_to)
 
-    if settings.LOGOUT_REDIRECT_URL:
+    if getattr(settings, "LOGOUT_REDIRECT_URL", None):
         return redirect(settings.LOGOUT_REDIRECT_URL)
 
     return redirect(reverse("usuarios:login"))
 
 
-def user_in_group(user, group_name: str) -> bool:
-    return user.is_authenticated and user.groups.filter(name=group_name).exists()
+# ----------------------------------------------------------------------
+# CATÁLOGO DE CARDS POR ROL
+# ----------------------------------------------------------------------
+ALL_CARDS = [
+    {
+        "key": "pacientes",
+        "title": "Pacientes",
+        "desc": "Gestión integral de expedientes",
+        "href": "/pacientes/",
+        "icon": "bi-people",
+        "groups": ["Director", "Lider"],
+    },
+    {
+        "key": "contabilidad",
+        "title": "Contabilidad",
+        "desc": "Ingresos, egresos y reportes",
+        "href": "/contabilidad/",
+        "icon": "bi-cash-coin",
+        "groups": ["Director", "Contador"],
+    },
+    {
+        "key": "eventos",
+        "title": "Eventos",
+        "desc": "Programación de actividades",
+        "href": "/eventos/",
+        "icon": "bi-calendar-event",
+        "groups": ["Director", "Organizador"],
+    },
+    {
+        "key": "reportes",
+        "title": "Reportes",
+        "desc": "Indicadores y exportes",
+        "href": "/reportes/",
+        "icon": "bi-bar-chart",
+        "groups": ["Director", "Responsable"],
+    },
+    {
+        "key": "usuarios",
+        "title": "Usuarios",
+        "desc": "Gestión de personal y roles",
+        "href": "/admin/auth/user/",
+        "icon": "bi-person-gear",
+        "groups": ["Director"],
+    },
+    {
+        "key": "perfil",
+        "title": "Mi Perfil",
+        "desc": "Datos de cuenta",
+        "href": "/accounts/profile/",
+        "icon": "bi-person-circle",
+        "groups": ["*"],
+    },
+    {
+        "key": "ayuda",
+        "title": "Ayuda",
+        "desc": "Guías y soporte",
+        "href": "/ayuda/",
+        "icon": "bi-info-circle",
+        "groups": ["*"],
+    },
+]
 
 
-def dashboard(request):
-    is_director = user_in_group(request.user, "Director") or request.user.is_superuser
-    is_lider = user_in_group(request.user, "Lider")
-    is_conta = user_in_group(request.user, "Contabilidad")
+def visible_cards_for(user):
+    """Filtra ALL_CARDS según los grupos del usuario."""
+    if not user or not user.is_authenticated:
+        return []
+    if user.is_superuser:
+        return ALL_CARDS
+    visibles = []
+    for c in ALL_CARDS:
+        if "*" in c["groups"] or user_in_groups(user, c["groups"]):
+            visibles.append(c)
+    return visibles
 
-    cards = []
-    if is_director:
-        cards.extend([
-            {"title": "Pacientes", "desc": "Gestion integral de pacientes", "href": "/pacientes/"},
-            {"title": "Contabilidad", "desc": "Ingresos, egresos y reportes", "href": "/contabilidad/"},
-            {"title": "Reportes", "desc": "Indicadores y exportaciones", "href": "/reportes/"},
-            {"title": "Usuarios", "desc": "Administracion de personal y roles", "href": "/admin/auth/user/"},
-        ])
-    else:
-        if is_lider:
-            cards.append({"title": "Pacientes", "desc": "Gestion de expedientes", "href": "/pacientes/"})
-        if is_conta:
-            cards.append({"title": "Contabilidad", "desc": "Movimientos y balances", "href": "/contabilidad/"})
-    cards.extend([
-        {"title": "Mi Perfil", "desc": "Datos de cuenta", "href": "/accounts/profile/"},
-        {"title": "Ayuda", "desc": "Guias y soporte", "href": "/ayuda/"},
-    ])
-    context = {"cards": cards, "is_director": is_director, "is_lider": is_lider, "is_conta": is_conta}
-    template_path = "usuarios/dashboard.html"
-    return render(request, template_path, context)
+
+# ----------------------------------------------------------------------
+# DASHBOARD PRINCIPAL
+# ----------------------------------------------------------------------
 @login_required
-def pacientes_home(request):
-    return HttpResponse("<h1>Pacientes</h1><p>Modulo en construccion.</p>")
-    next_page = reverse_lazy("usuarios:login")
-
-    def post(self, request, *args, **kwargs):
-        messages.success(request, "Sesion cerrada correctamente.")
-        return super().post(request, *args, **kwargs)
+def dashboard(request):
+    cards = visible_cards_for(request.user)
+    return render(request, "usuarios/dashboard.html", {"cards": cards})
